@@ -1,0 +1,10 @@
+target/
+.mvn/apache-maven-*/
+.mvn/*.tar.gz
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.env
+docs/screenshots/*.png
+!docs/screenshots/.gitkeep
