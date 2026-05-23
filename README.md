@@ -1,21 +1,90 @@
 # Secure TaskFlow API
 
-Secure TaskFlow is a Spring Boot REST API for teams, projects, tasks, comments, role-based permissions, JWT authentication, and audit logging.
+Secure TaskFlow is a production-style Spring Boot REST API for collaborative task and project management.  
+The system supports authentication, role-based authorization, team and project management, task workflows, comments, and audit logging.
+
+The project was designed to demonstrate backend engineering practices commonly used in real enterprise applications, including layered architecture, JWT security, relational database modeling, API validation, OpenAPI documentation, integration testing, and containerized local development.
+
+## Features
+
+- JWT authentication and stateless authorization
+- Role-based access control (ADMIN, MANAGER, MEMBER)
+- Team and project management
+- Task creation and workflow status transitions
+- Task comments and collaboration
+- Audit logging for sensitive operations
+- PostgreSQL persistence with Spring Data JPA
+- Swagger/OpenAPI documentation
+- Docker Compose local infrastructure
+- Integration and API testing
+
+---
+
+## Architecture Overview
+
+The API follows a layered Spring Boot architecture:
+
+```text
+Controller Layer
+    ↓
+Service Layer
+    ↓
+Repository Layer
+    ↓
+PostgreSQL Database
+```
+
+Security is implemented using Spring Security with JWT-based authentication filters and role-aware endpoint protection.
+
+---
+
+## Technology Stack
+
+```text
+Java 17
+Spring Boot 3
+Spring Security
+JWT Authentication
+Spring Data JPA
+PostgreSQL
+Docker Compose
+Swagger / OpenAPI
+JUnit
+MockMvc
+H2 Integration Testing
+```
+
+Keywords: java, spring boot, spring security, jwt, rest api, postgresql, docker, swagger, backend
+
+---
 
 ## Requirements
 
 - Java 17
-- Maven 3.9 or the included `./mvnw`
-- Docker Desktop for the bundled PostgreSQL service
+- Maven 3.9+ or included `./mvnw`
+- Docker Desktop
+
+---
 
 ## Run Locally
 
+Start PostgreSQL:
+
 ```bash
 docker compose up -d postgres
+```
+
+Run the API:
+
+```bash
 ./mvnw spring-boot:run
 ```
 
-Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
+Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
 
 Run tests:
 
@@ -23,51 +92,20 @@ Run tests:
 ./mvnw test
 ```
 
-## Screenshots
+---
 
-Swagger UI:
+## API Workflow
 
-![](docs/screenshots/swagger-ui.png)
+Typical application flow:
 
+1. User registers and authenticates
+2. JWT token is returned
+3. Authorized users create teams and projects
+4. Team members create and update tasks
+5. Comments and audit logs are persisted
+6. Admin users inspect audit history
 
-Authentication response:
-
-![](docs/screenshots/auth-response.png)
-
-
-Create team:
-
-![](docs/screenshots/create-team.png)
-
-
-Task status update:
-
-![](docs/screenshots/task-status-update.png)
-
-
-Audit logs:
-
-![](docs/screenshots/audit-logs.png)
-
-
-These screenshots are from the running Spring Boot API: Swagger UI plus real JSON responses returned by the authentication, team, task, and audit endpoints.
-
-To reproduce the same views:
-
-```bash
-docker compose up -d postgres
-./mvnw spring-boot:run
-```
-
-Open `http://localhost:8080/swagger-ui.html`, then run the example requests in `requests.http` or the `curl` flow below.
-
-## Domain
-
-- Users register and receive a JWT.
-- Team owners and managers add members.
-- Managers create projects under teams.
-- Members create tasks, change status, and add comments.
-- Admins inspect audit logs.
+---
 
 ## Main Endpoints
 
@@ -77,39 +115,98 @@ Open `http://localhost:8080/swagger-ui.html`, then run the example requests in `
 | Users | `GET /api/users/me`, `GET /api/users`, `PATCH /api/users/{userId}/role` |
 | Teams | `POST /api/teams`, `GET /api/teams`, `POST /api/teams/{teamId}/members` |
 | Projects | `POST /api/projects`, `GET /api/projects`, `PUT /api/projects/{projectId}` |
-| Tasks | `POST /api/tasks`, `GET /api/tasks`, `PATCH /api/tasks/{taskId}/status`, comments |
+| Tasks | `POST /api/tasks`, `GET /api/tasks`, `PATCH /api/tasks/{taskId}/status` |
+| Comments | `POST /api/tasks/{taskId}/comments` |
 | Audit | `GET /api/audit-logs` |
 
-## Example Request
+---
+
+## Example Requests
+
+Register a user:
 
 ```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"fullName":"Maya Cohen","email":"maya.cohen@example.com","password":"password123","role":"ADMIN"}'
+  -d '{
+    "fullName":"Maya Cohen",
+    "email":"maya.cohen@example.com",
+    "password":"password123",
+    "role":"ADMIN"
+  }'
 ```
 
-Use the returned token as a bearer token for protected endpoints.
-
-Create a team, project, task, status update, and audit-log response:
+Create a team:
 
 ```bash
 curl -X POST http://localhost:8080/api/teams \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Platform Operations","description":"Owns workflow service delivery"}'
+  -d '{
+    "name":"Platform Operations",
+    "description":"Owns workflow service delivery"
+  }'
 ```
 
-Continue with `requests.http` for project creation, task creation, status transition, and `GET /api/audit-logs`.
+Additional example flows are available in `requests.http`.
 
-## Implementation Notes
+---
+
+## Screenshots
+
+### Swagger UI
+
+![Swagger UI](docs/screenshots/swagger-ui.png)
+
+### Authentication Response
+
+![Authentication Response](docs/screenshots/auth-response.png)
+
+### Create Team
+
+![Create Team](docs/screenshots/create-team.png)
+
+### Task Status Update
+
+![Task Status Update](docs/screenshots/task-status-update.png)
+
+### Audit Logs
+
+![Audit Logs](docs/screenshots/audit-logs.png)
+
+These screenshots were captured from the running Spring Boot API using real authenticated requests and persisted PostgreSQL data.
+
+---
+
+## Project Structure
 
 ```text
-Spring Boot 3
-Spring Security with JWT
-Spring Data JPA with PostgreSQL
-H2-backed integration tests
-Swagger/OpenAPI via springdoc
-Docker Compose for local database startup
+src/main/java/...     Application source code
+src/test/java/...     Integration and unit tests
+docs/screenshots/     README screenshots
+requests.http         Example API requests
+docker-compose.yml    Local PostgreSQL environment
 ```
 
-Keywords: java, spring boot, spring security, jwt, postgresql, rest api, docker, swagger, junit
+---
+
+## Security Notes
+
+- Passwords are hashed using Spring Security password encoders
+- JWT tokens secure protected endpoints
+- Role-based authorization is enforced at the API layer
+- Audit logs track privileged operations
+- Validation prevents malformed request payloads
+
+---
+
+## Future Improvements
+
+- Refresh token support
+- Redis caching
+- Rate limiting
+- Pagination and filtering
+- WebSocket notifications
+- CI/CD deployment pipeline
+- Kubernetes deployment manifests
+- Observability with Prometheus and Grafana
