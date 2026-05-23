@@ -25,6 +25,21 @@ Run tests:
 
 ## Screenshots
 
+Swagger UI:
+![Swagger UI](docs/screenshots/swagger-ui.png)
+
+Authentication response:
+![Authentication response](docs/screenshots/auth-response.png)
+
+Create team:
+![Create team](docs/screenshots/create-team.png)
+
+Task status update:
+![Task status update](docs/screenshots/task-status-update.png)
+
+Audit logs:
+![Audit logs](docs/screenshots/audit-logs.png)
+
 These screenshots are from the running Spring Boot API: Swagger UI plus real JSON responses returned by the authentication, team, task, and audit endpoints.
 
 To reproduce the same views:
@@ -35,16 +50,6 @@ docker compose up -d postgres
 ```
 
 Open `http://localhost:8080/swagger-ui.html`, then run the example requests in `requests.http` or the `curl` flow below.
-
-![Swagger UI](docs/screenshots/swagger-ui.png)
-
-![Authentication response](docs/screenshots/auth-response.png)
-
-![Create team](docs/screenshots/create-team.png)
-
-![Task status update](docs/screenshots/task-status-update.png)
-
-![Audit logs](docs/screenshots/audit-logs.png)
 
 ## Domain
 
