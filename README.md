@@ -26,19 +26,29 @@ Run tests:
 ## Screenshots
 
 Swagger UI:
+
 ![](docs/screenshots/swagger-ui.png)
 
+
 Authentication response:
+
 ![](docs/screenshots/auth-response.png)
 
+
 Create team:
+
 ![](docs/screenshots/create-team.png)
 
+
 Task status update:
+
 ![](docs/screenshots/task-status-update.png)
 
+
 Audit logs:
+
 ![](docs/screenshots/audit-logs.png)
+
 
 These screenshots are from the running Spring Boot API: Swagger UI plus real JSON responses returned by the authentication, team, task, and audit endpoints.
 
